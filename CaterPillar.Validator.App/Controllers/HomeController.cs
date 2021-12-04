@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 
 namespace CaterPillar.Validator.App.Controllers
 {
@@ -25,7 +26,7 @@ namespace CaterPillar.Validator.App.Controllers
 
         public IActionResult Index()
         {
-            ViewBag.DailyStatistics = _analyticsService.GetTodayStatistics();            
+            ViewBag.DailyStatistics = _analyticsService.GetTodayStatistics();
             return View();
         }
 
@@ -33,9 +34,35 @@ namespace CaterPillar.Validator.App.Controllers
         [RequestSizeLimit(734003200)]
         public IActionResult Upload(IFormFile file, string transactionType)
         {
-            Transaction currentTransaction = _transactionService.Process(file, transactionType);            
+            //Validation
+            string extension = Path.GetExtension(file?.FileName);
+            if (file == null || string.IsNullOrWhiteSpace(extension) || extension != ".csv")
+            {
+                ViewBag.CustomMessage = $"Please check the file uploaded";
+                ViewBag.DailyStatistics = _analyticsService.GetTodayStatistics();
+                return View("Index");
+            }
+
+            //Start stopwatch
+            var watch = new Stopwatch();
+            watch.Start();
+
+            //Process the transaction
+            Transaction currentTransaction = _transactionService.Process(file, transactionType);
+
+            //Set viewbag data
             ViewBag.CurrentTransaction = currentTransaction;
-            ViewBag.DailyStatistics = _analyticsService.GetTodayStatistics();            
+
+            //Get daily statistics
+            ViewBag.DailyStatistics = _analyticsService.GetTodayStatistics();
+
+            //Stop stopwatch
+            watch.Stop();
+
+            //Set custom message
+            ViewBag.CustomMessage = $"Execution Time: {watch.ElapsedMilliseconds} ms";
+
+            //Return View
             return View("Index");
         }
 

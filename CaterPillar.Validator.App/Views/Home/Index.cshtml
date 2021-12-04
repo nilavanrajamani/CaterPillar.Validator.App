@@ -12,112 +12,125 @@
     <form asp-controller="Home"
           asp-action="Upload"
           method="post"
-          enctype="multipart/form-data">
-        <div class="form-group">
-            <b><label for="fileUpload1">Please upload sales record CSV</label></b>
-            <input type="file" name="file" id="fileUpload1" class="form-control-file" />
-        </div>
-        <div class="form-group">
-            <b><label>Select Transaction Type</label></b>
-            <div class="form-check">
-                <input class="form-check-input" type="radio" name="transactionType" id="transactionType1" value="nottransaction">
-                <label class="form-check-label" for="transactionType1">
-                    Process valid rows in case of error(s)
-                </label>
-            </div>
-            <div class="form-check">
-                <input class="form-check-input" type="radio" name="transactionType" id="transactionType2" checked value="transaction">
-                <label class="form-check-label" for="transactionType2">
-                    Do not process valid rows in case of error(s)
-                </label>
-            </div>
-        </div>
-        <div class="form-group">
-            <button type="submit" class="form-control">Upload File</button>
-        </div>
-        <div class="form-group">
-            @{
-                if (currentTransaction != null)
-                {
-                    if (currentTransaction.InvalidRecordsCount == 0)
-                    {
-                        <div class="alert alert-success" role="alert">
-                            Sales Record processed successfully
-                        </div>
+          enctype="multipart/form-data" onsubmit="return validateFileUpload(Event)">
+        <div class="card">
+            <div class="card-header">File Upload</div>
+            <div class="card-body">
+                <div class="form-group">
+                    <b><label for="fileUpload1">Please upload sales record CSV</label></b>
+                    <input type="file" name="file" id="fileUpload1" class="form-control-file" />
+                </div>
+                <div class="form-group">
+                    <b><label>Select Transaction Type</label></b>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="transactionType" id="transactionType1" value="nottransaction">
+                        <label class="form-check-label" for="transactionType1">
+                            Process valid rows in case of error(s)
+                        </label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="transactionType" id="transactionType2" checked value="transaction">
+                        <label class="form-check-label" for="transactionType2">
+                            Do not process valid rows in case of error(s)
+                        </label>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <button type="submit" id="btnFileUpload" class="form-control btn-primary">Upload File</button>
+                </div>
+                <div class="form-group">
+                    @{
+                        if (currentTransaction != null)
+                        {
+                            if (currentTransaction.InvalidRecordsCount == 0)
+                            {
+                                <div class="alert alert-success" role="alert">
+                                    Sales Record processed successfully
+                                </div>
+                            }
+                            else
+                            {
+                                <div class="alert alert-danger" role="alert">
+                                    Error(s) found in sales record file uploaded. Please download the error file <a asp-controller="Home" asp-action="Download" asp-route-link="@currentTransaction.ErrorFileName">here</a>, correct the errors and upload again
+                                </div>
+                            }
+                        }
+                        if (!string.IsNullOrWhiteSpace(ViewBag.CustomMessage))
+                        {
+                            <div class="alert alert-primary" role="alert">
+                                @ViewBag.CustomMessage
+                            </div>
+                        }
                     }
-                    else
-                    {
-                        <div class="alert alert-danger" role="alert">
-                            "Error(s) found in sales record file uploaded. Please download the error file <a asp-controller="Home" asp-action="Download" asp-route-link="@currentTransaction.ErrorFileName">here</a>, correct the errors and upload again"
-                        </div>
-                    }
-                }
-            }
+                </div>
+            </div>
         </div>
-        <div class="container">
-            <div class="row">
-                <div class="col-sm-12">
-                    &nbsp;
-                </div>
+        <br/>
+        <br/>
+        <div class="card">
+            <div class="card-header">
+                Statistics
             </div>
-            <div class="row">
-                <div class="col-sm-12">
-                    &nbsp;
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-sm-12">
-                    &nbsp;
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-sm-12">
-                    <b>Today's Sales Record statistics:</b>
-                </div>
-            </div>
-            <div class="row">
-                <div class="four col-md-4">
-                    <div class="counter-box colored">
-                        <i class="fa fa-upload"></i> <span class="counter">@dailyStatistics.CountOfRecords</span>
-                        <p>Total Records uploaded</p>
+            <div class="card-body">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <b>Today's Sales validation statistics</b>
+                        </div>
                     </div>
-                </div>
-                <div class="four col-md-4">
-                    <div class="counter-box">
-                        <i class="fa fa-check"></i> <span class="counter">@dailyStatistics.CountOfValidRecords</span>
-                        <p>Valid Records</p>
+                    <div class="row">
+                        &nbsp;
                     </div>
-                </div>
-                <div class="four col-md-4">
-                    <div class="counter-box">
-                        <i class="fa fa-exclamation"></i> <span class="counter">@dailyStatistics.CountOfInvalidRecords</span>
-                        <p>Invalid Records</p>
+                    <div class="row">
+                        <div class="four col-md-4">
+                            <div class="counter-box colored">
+                                <i class="fa fa-upload"></i> <span class="counter">@dailyStatistics.CountOfRecords</span>
+                                <p>Total Records uploaded</p>
+                            </div>
+                        </div>
+                        <div class="four col-md-4">
+                            <div class="counter-box">
+                                <i class="fa fa-check"></i> <span class="counter">@dailyStatistics.CountOfValidRecords</span>
+                                <p>Valid Records</p>
+                            </div>
+                        </div>
+                        <div class="four col-md-4">
+                            <div class="counter-box">
+                                <i class="fa fa-exclamation"></i> <span class="counter">@dailyStatistics.CountOfInvalidRecords</span>
+                                <p>Invalid Records</p>
+                            </div>
+                        </div>
                     </div>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-sm-12">
-                    &nbsp;
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-sm-12">
-                    &nbsp;
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-sm-12">
-                    &nbsp;
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-sm-12">
-                    <b>Monthly Sales Record statistics:</b>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-sm-12">
-                    <div id="chart_div"></div>
+                    <div class="row">
+                        <div class="col-sm-12">
+                            &nbsp;
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-12">
+                            &nbsp;
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-12">
+                            &nbsp;
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <b>Sales Validation statistics for past month</b>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-12">
+                            &nbsp;
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <div id="chart_div"></div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>

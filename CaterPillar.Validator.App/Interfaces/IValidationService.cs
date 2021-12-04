@@ -10,5 +10,6 @@ namespace CaterPillar.Validator.WebApp.Interfaces
     public interface IValidationService
     {
         IEnumerable<SalesRecord> PerformValidation(IEnumerable<SalesRecord> salesRecords);
+        IEnumerable<SalesRecord> PerformValidationParallel(IEnumerable<SalesRecord> salesRecords);
     }
 }

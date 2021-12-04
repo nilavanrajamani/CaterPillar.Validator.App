@@ -2,7 +2,9 @@
 using CaterPillar.Validator.WebApp.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
+using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using Transaction = CaterPillar.Validator.WebApp.Models.Transaction;
 
@@ -32,8 +34,11 @@ namespace CaterPillar.Validator.WebApp.Services
             IEnumerable<SalesRecord> salesRecords =
                 _fileOperation.GetDataCollection(currentTransaction.FileName);
 
-            _logger.LogInformation("Perform Validation and return invalid records");
+            _logger.LogInformation("Perform Validation and return invalid records");            
             IEnumerable<SalesRecord> invalidRecords = _validationService.PerformValidation(salesRecords);
+
+            //Below line is commented since splitting and combining threads for this small operation takes more time than the operation itself
+            //IEnumerable<SalesRecord> invalidRecords = _validationService.PerformValidationParallel(salesRecords);
 
             _logger.LogInformation("Create file with invalid records");
             _fileOperation.WriteInvalidRecords(invalidRecords, currentTransaction);
@@ -41,6 +46,7 @@ namespace CaterPillar.Validator.WebApp.Services
             currentTransaction.TotalRecordsCount = salesRecords.Count();
             currentTransaction.InvalidRecordsCount = invalidRecords.Count();
 
+            _logger.LogInformation("Add to statistics");
             _analyticsService.AddStatistics(currentTransaction, transactionType);
             return currentTransaction;
         }

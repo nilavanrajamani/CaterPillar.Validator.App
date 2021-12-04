@@ -44,3 +44,9 @@ $(document).ready(function () {
         }
     })
 });
+
+function validateFileUpload(event) {
+    $('#btnFileUpload').attr('disabled', 'disabled');
+    $('#btnFileUpload').html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Uploading...');
+    return true;
+}
