@@ -1,0 +1,50 @@
+[
+  {
+    "Date": "04-12-2021",
+    "DailyStatistics": {
+      "CountOfRecords": 12629855,
+      "CountOfValidRecords": 4740290,
+      "CountOfInvalidRecords": 7889565
+    }
+  },
+  {
+    "Date": "03-12-2021",
+    "DailyStatistics": {
+      "CountOfRecords": 126255,
+      "CountOfValidRecords": 47400,
+      "CountOfInvalidRecords": 79565
+    }
+  },
+  {
+    "Date": "02-12-2021",
+    "DailyStatistics": {
+      "CountOfRecords": 126295,
+      "CountOfValidRecords": 47290,
+      "CountOfInvalidRecords": 78565
+    }
+  },
+  {
+    "Date": "04-11-2021",
+    "DailyStatistics": {
+      "CountOfRecords": 1262985,
+      "CountOfValidRecords": 440290,
+      "CountOfInvalidRecords": 789565
+    }
+  },
+  {
+    "Date": "05-11-2021",
+    "DailyStatistics": {
+      "CountOfRecords": 1262985,
+      "CountOfValidRecords": 474290,
+      "CountOfInvalidRecords": 788565
+    }
+  },
+  {
+    "Date": "03-11-2021",
+    "DailyStatistics": {
+      "CountOfRecords": 129855,
+      "CountOfValidRecords": 47290,
+      "CountOfInvalidRecords": 79565
+    }
+  }
+]
